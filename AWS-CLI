@@ -1,0 +1,20 @@
+# Paste the following to ~/.aws/config
+[profile tec-sec-sec-prd]
+sso_start_url = https://d-90677b2a7e.awsapps.com/start#/
+sso_region = us-east-1
+sso_account_id = 656079796463
+sso_role_name = _TECAdmin-TestProd
+region = us-east-1
+output = text
+
+
+# One-time config
+aws configure sso
+
+
+# To connect to an instance (requires a profile in .aws\config)
+aws sso login --profile iar_dev
+
+aws ssm start-session --target i-041b14929fd4310b9 --profile iar_dev
+aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query "Reservations[*].Instances[*].InstanceId" --output text --profile iar_dev2
+aws ec2 describe-instances --filters Name=instance-state-name,Values=running --profile iar_dev2 --query "Reservations[*].Instances[*].{IP:PrivateIpAddress,Type:InstanceType,State:State.Name,ID:InstanceId,Application:Tags[?Key=='APPLICATION_NAME']|[0].Value,Name:Tags[?Key=='Name']|[0].Value}" --output table
